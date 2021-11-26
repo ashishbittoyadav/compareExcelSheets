@@ -9,13 +9,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Scanner;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-
 
 
 public class Main {
@@ -33,6 +29,8 @@ public class Main {
     int numberOfRows2 = 0;
 
     int numberOfCells2 = 0;
+    int numberOfCells3 = 3;
+    String extraDiffValue = "";
 
     static int total = 0;
 
@@ -52,11 +50,11 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
 
-        String ExcelPath1="D:\\new\\Book1.xlsx";
+        String ExcelPath1 = "D:\\new\\Book1.xlsx";
 
-        String ExcelPath2="D:\\new\\Book2.xlsx";
+        String ExcelPath2 = "D:\\new\\Book2.xlsx";
 
-        String ExcelPath3="D:\\new\\Book3.xlsx";
+        String ExcelPath3 = "D:\\new\\Book3.xlsx";
 
         Scanner sc = new Scanner(System.in);
 
@@ -96,18 +94,32 @@ public class Main {
 
             System.out.println("\n\nCreating new excel sheet:");
 
-            for (int i = 0; i <= numberOfRows; i++) {
+            for (DataObject data :
+                    Excel3) {
+                System.out.println(data.toString()+" checking");
+            }
+
+            for (int i = 0; i <= Excel3.size(); i++) {
 
                 XSSFRow row = sheet3.createRow(rows++);
 
-                for (int j = 0; j < numberOfCells; j++) {
+                for (int j = 0; j < numberOfCells3; j++) {
 
                     XSSFCell cell = row.createCell(j);
 
-                    cell.setCellValue(Excel3.get(q).getValue());
-
-                    q++;
-
+                    try {
+                        System.out.println(j==1 && Excel3.get(q).getDiffValue()==null);
+                        if(j==2 && Excel3.get(q).getDiffValue()!=null)
+                            cell.setCellValue(Excel3.get(q).getDiffValue());
+                        else if(j!=0 && j!=1 && Excel3.get(q).getDiffValue()==null){
+                            cell.setCellValue(" ");
+                        }
+                        else
+                            cell.setCellValue(Excel3.get(q).getValue());
+                        q++;
+                    } catch (Exception e) {
+                        System.out.println(e.getLocalizedMessage());
+                    }
                 }
 
             }
@@ -118,7 +130,7 @@ public class Main {
 
             out.close();
 
-//            workbook3.close();
+            workbook3.close();
 
             new Main().printString(Excel3);
 
@@ -126,6 +138,7 @@ public class Main {
 
             // TODO Auto-generated catch block
 
+            System.out.println(e.getLocalizedMessage());
             e.printStackTrace();
 
         }
@@ -146,50 +159,52 @@ public class Main {
 
             int value = 0;
 
-
-            Excel3.addAll(array1);
-            Excel3.addAll(array2);
-
-            System.out.println(Excel3.removeAll(array2));
-
-//            for (int i=0;i<r2;i++) {
-//                for (int j = 0; j < Excel3.size(); j++) {
-//                    if (Excel3.get(j).getValue().equals(array2.get(i).getValue())) {
-//                        System.out.println(array2.get(i).getValue());
-////                        Excel3.add(array2.get(i).toString());
-////                        value++;
-////                        total++;
-//                        break;
-//                    }
-//                    else{
-////                        System.out.println("else "+array2.get(i).getValue());
-//                        Excel3.add(array2.get(i));
-////                        value++;
-////                        total++;
-//                        break;
-//                    }
-//                }
-//            }
-
+            for (DataObject data :
+                    Excel3) {
+                System.out.println(data.toString());
+                value++;
+                total++;
+            }
 
             System.out.println("\nNo of cells that did not match:-  " + error);
 
             System.out.println("Percent error in the sheets:-  " + (error * 100.00 / total) + " %");
 
-//            new Main().writeExcel(Filename3);
+            new Main().writeExcel(Filename3);
 
         } catch (Exception e) {
-
             System.out.println(e);
-
         }
 
         System.out.println(Excel3.size());
+    }
 
-//        for (DataObject data :
-//                Excel3) {
-//            System.out.println(data.getValue());
-//        }
+    ArrayList<DataObject> removeduplicates(ArrayList<DataObject> a, int n) {
+        ArrayList<DataObject> duplicateElement = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            if (i != n - 1) {
+                for (int j = i + 1; j < n; j++) {
+                    if (a.get(i).getValue().equalsIgnoreCase(a.get(j).getValue())) {
+                        duplicateElement.add(a.get(i));
+                        break;
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < a.size(); i++) {
+            for (int j = 0; j < duplicateElement.size(); j++) {
+                a.remove(duplicateElement.get(j));
+            }
+        }
+        for (DataObject data :
+                duplicateElement) {
+            System.out.println("duplicate:-" + data.getValue());
+        }
+        for (DataObject data :
+                a) {
+            System.out.println("a:-" + data.getValue());
+        }
+        return a;
     }
 
     public void print(ArrayList<Object> array) {
@@ -206,9 +221,9 @@ public class Main {
 
             for (int i = 0; i <= numberOfRows; i++) {
 
-                System.out.println("");
+                System.out.println(""+numberOfRows);
 
-                for (int j = 1; j <= numberOfCells; j++) {
+                for (int j = 1; j <= numberOfCells3; j++) {
 
                     System.out.print(array.get(s) + "\t\t\t");
 
@@ -238,13 +253,13 @@ public class Main {
 
             System.out.println("Printing the contents of excel sheet:");
 
-            for (int i = 0; i <= numberOfRows; i++) {
+            for (int i = 0; i <= numberOfRows-1; i++) {
 
-                System.out.println("");
+                System.out.println("sada"+numberOfCells3);
 
-                for (int j = 1; j <= numberOfCells; j++) {
+                for (int j = 1; j <= numberOfCells3; j++) {
 
-                    System.out.print(array.get(s) + "\t\t\t");
+//                    System.out.print("aaa "+array.get(s) + "\t\t\t");
 
                     s++;
 
@@ -318,6 +333,7 @@ public class Main {
 
             final Iterator<org.apache.poi.ss.usermodel.Row> rowIterator2_1 = sheet2.iterator();
 
+
             numberOfRows = sheet1.getLastRowNum();
 
             if (rowIterator1_1.hasNext()) {
@@ -348,8 +364,13 @@ public class Main {
 
             if (numberOfRows == numberOfRows2 && numberOfCells == numberOfCells2) {
 
+                ArrayList<ArrayList<DataObject>> tempRow = new ArrayList<>();
+                ArrayList<ArrayList<DataObject>> tempRow2 = new ArrayList<>();
+                ArrayList<DataObject> tempSheet1 = new ArrayList<>();
+                ArrayList<DataObject> tempSheet2 = new ArrayList<>();
                 while (rowIterator1.hasNext() && rowIterator2.hasNext()) {
 
+                    System.out.println("row iterate");
                     org.apache.poi.ss.usermodel.Row row1 = rowIterator1.next();
 
                     org.apache.poi.ss.usermodel.Row row2 = rowIterator2.next();
@@ -360,6 +381,7 @@ public class Main {
 
                     Iterator<org.apache.poi.ss.usermodel.Cell> cellIterator2 = row2.cellIterator();
 
+//                    System.out.println("data is :-"+cellIterator1.next().getStringCellValue() +" : "+cellIterator2.next().getStringCellValue());
                     while (cellIterator1.hasNext() && cellIterator2.hasNext()) {
 
                         org.apache.poi.ss.usermodel.Cell cell1 = cellIterator1.next();
@@ -367,101 +389,132 @@ public class Main {
                         org.apache.poi.ss.usermodel.Cell cell2 = cellIterator2.next();
 
                         //Check the cell type and format accordingly
-
-                        DataObject dataObject = new DataObject();
+                        DataObject tempThreeData = new DataObject();
+                        DataObject sheetOneRow = new DataObject();
+                        DataObject sheetTwoRow = new DataObject();
+                        DataObject sheetThreeData = new DataObject();
                         switch (cell1.getCellTypeEnum()) {
-
-
                             case NUMERIC:
-
                                 //  System.out.print(cell1.getNumericCellValue() + "\t\t");
-                                dataObject.setIndex(cell1.getNumericCellValue());
+                                tempThreeData.setIndex(cell1.getNumericCellValue());
+                                sheetOneRow.setIndex(cell1.getNumericCellValue());
+                                sheetThreeData.setIndex(cell1.getNumericCellValue());
 //                                Excel1.add(cell1.getNumericCellValue());
-
                                 break;
-
                             case STRING:
-
                                 //  System.out.print(cell1.getStringCellValue() + "\t\t");
-
-                                dataObject.setValue(cell1.getStringCellValue());
+                                tempThreeData.setValue(cell1.getStringCellValue());
+                                sheetOneRow.setValue(cell1.getStringCellValue());
+                                sheetThreeData.setValue(cell1.getStringCellValue());
 //                                Excel1.add(cell1.getStringCellValue());
-
                                 break;
                         }
-                        Excel1.add(dataObject);
-
+                        Excel1.add(tempThreeData);
+                        tempSheet1.add(tempThreeData);
                         switch (cell2.getCellTypeEnum()) {
-
                             case NUMERIC:
-
-                                //  System.out.print(cell2.getNumericCellValue() + "\t\t");
-                                dataObject.setIndex(cell2.getNumericCellValue());
+//                                tempThreeData.setIndex(cell2.getNumericCellValue());
+                                sheetTwoRow.setIndex(cell2.getNumericCellValue());
 //                                Excel2.add(cell2.getNumericCellValue());
-
                                 break;
-
                             case STRING:
-
-                                //  System.out.print(cell2.getStringCellValue() + "\t\t");
-
-                                dataObject.setValue(cell2.getStringCellValue());
+//                                tempThreeData.setValue(cell2.getStringCellValue());
+                                sheetTwoRow.setValue(cell2.getStringCellValue());
 //                                Excel2.add(cell2.getStringCellValue());
-
                                 break;
-
                         }
-                        Excel2.add(dataObject);
+                        Excel2.add(tempThreeData);
+                        tempSheet2.add(sheetTwoRow);
+                        //sheet three
+                        if(!sheetOneRow.getValue().equalsIgnoreCase(sheetTwoRow.getValue())) {
+                            numberOfCells3 = 3;
+                            sheetThreeData.setDiffValue(sheetTwoRow.getValue());
+                        }else
+                            sheetThreeData.setDiffValue(sheetOneRow.getValue());
+                        Excel3 = new ArrayList<>();
+                        Excel3.add(sheetThreeData);
+//                        tempSheet1.add(sheetThreeData);
                     }
 
-                    //System.out.println("");
-
+                    tempRow.add(tempSheet1);
+                    tempRow2.add(tempSheet2);
+                    tempSheet1 = new ArrayList<>();
+                    tempSheet2 = new ArrayList<>();
                 }
 
                 System.out.println("\nRead Complete: Values from ExcelSheet 1 are stored in Excel1 and Values from ExcelSheet 2 are stored in Excel2 \n");
+
+                for (ArrayList<DataObject> data :
+                        tempRow) {
+                    for (DataObject d :
+                            data) {
+                        System.out.println("eeeee:--- "+d.toString());
+                    }
+                    tempSheet1.addAll(data);
+                }
+
+                for (ArrayList<DataObject> data :
+                        tempRow2) {
+                    tempSheet2.addAll(data);
+                }
+
+                Excel3.clear();
+                for (int i=0;i<tempSheet1.size();i++){
+                    if(tempSheet1.get(i).getValue().equalsIgnoreCase(tempSheet2.get(i).getValue())) {
+                        System.out.println("equal " + tempSheet1.get(i).getValue() + ":" + tempSheet2.get(i).getValue());
+                        Excel3.add(tempSheet1.get(i));
+                    }
+                    else {
+                        System.out.println("unequal " + tempSheet1.get(i).getValue() + ":" + tempSheet2.get(i).getValue());
+                        DataObject t = new DataObject();
+                        t.setValue(tempSheet1.get(i).getValue());
+                        t.setIndex(tempSheet2.get(i).getIndex());
+                        t.setDiffValue(tempSheet2.get(i).getValue());
+                        Excel3.add(t);
+                    }
+                }
+
+//                for (ArrayList<DataObject> data :
+//                        tempRow) {
+//                    Excel3.addAll(data);
+//                }
+
+                for (DataObject data :
+                        Excel3) {
+                    System.out.println(data.toString()+" final data");
+                }
+
 
                 file1.close();
 
                 file2.close();
 
-//                workbook1.close();
+                workbook1.close();
 
-//                workbook2.close();
+                workbook2.close();
 
-//                new Main().compareStore(Excel1, Excel2, Filename3);
+                new Main().compareStore(Excel1, Excel2, Filename3);
 
             } else {
-
                 System.out.println("Rows and Columns do not match");
 
                 while (rowIterator2.hasNext()) {
-
                     org.apache.poi.ss.usermodel.Row row2 = rowIterator2.next();
                     Iterator<org.apache.poi.ss.usermodel.Cell> cellIterator2 = row2.cellIterator();
-
-                    while (cellIterator2.hasNext()){
+                    while (cellIterator2.hasNext()) {
                         org.apache.poi.ss.usermodel.Cell cell2 = cellIterator2.next();
                         DataObject dataObject = new DataObject();
                         switch (cell2.getCellTypeEnum()) {
-
                             case NUMERIC:
-
                                 //  System.out.print(cell2.getNumericCellValue() + "\t\t");
-
                                 dataObject.setIndex(cell2.getNumericCellValue());
 //                                Excel2.add(cell2.getNumericCellValue());
-
                                 break;
-
                             case STRING:
-
                                 //  System.out.print(cell2.getStringCellValue() + "\t\t");
-
                                 dataObject.setValue(cell2.getStringCellValue());
 //                                Excel2.add(cell2.getStringCellValue());
-
                                 break;
-
                         }
                         Excel2.add(dataObject);
                     }
@@ -501,7 +554,7 @@ public class Main {
                         Excel1.add(dataObject);
                     }
 
-                    new Main().compareStore(Excel1,Excel2,Filename3);
+                    new Main().compareStore(Excel1, Excel2, Filename3);
                     //System.out.println("");
 
                 }
@@ -526,23 +579,41 @@ public class Main {
 
 }
 
-class DataObject{
+class DataObject {
     private double index;
     private String value;
+    private String diffValue;
 
-    void setIndex(double _index){
+    void setIndex(double _index) {
         index = _index;
     }
 
-    void setValue(String _value){
+    void setValue(String _value) {
         value = _value;
     }
 
-    String getValue(){
+    void setDiffValue(String _diffValue){
+        diffValue = _diffValue;
+    }
+
+    String getDiffValue(){
+        return diffValue;
+    }
+
+    String getValue() {
         return value;
     }
 
-    double getIndex(){
+    double getIndex() {
         return index;
+    }
+
+    @Override
+    public String toString() {
+        return "DataObject{" +
+                "index=" + index +
+                ", value='" + value + '\'' +
+                ", diffValue='" + diffValue + '\'' +
+                '}';
     }
 }
